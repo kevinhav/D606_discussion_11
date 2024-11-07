@@ -1,0 +1,22 @@
+---
+title: "Recommender Systems with Graph Databases"
+author: "Kevin Havis"
+format: html
+---
+
+## Introduction
+
+### Why graph databases versus traditional databases
+
+https://annals-csis.org/proceedings/2021/pliks/33.pdf
+
+
+### Companies that use graph databases today to power their recommender engines
+
+### Specific use case; job recommender systems using graph databases
+
+https://feast-ecmlpkdd.github.io/archive/2021/papers/FEAST2021_paper_2.pdf
+
+###
+
+
