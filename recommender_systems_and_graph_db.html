@@ -71,34 +71,72 @@ ul.task-list li input[type="checkbox"] {
 
 <section id="introduction" class="level2">
 <h2 class="anchored" data-anchor-id="introduction">Introduction</h2>
-<p>In our daily lives, we interact several various recommender systems; algorithims designed to find products, content, or other people that we may have connections with. Some of the most successful, such as Facebook’s “People you may know”, Wikipedia’s related articles, and Netflix’s movie recommendations, have a common denominator; their underlying data storage, specifically, graph databases.</p>
+<p>In our daily lives, we interact several various recommender systems; algorithms designed to find products, content, or other people that we may have connections with. Some of the most successful, such as Facebook’s “People you may know”, Wikipedia’s related articles, and Netflix’s movie recommendations, have a common denominator; their underlying data storage, specifically, graph databases.</p>
 <p>Today we will take a deeper look into how recommender systems can be enabled by graph models, and why they are such an effective design pattern.</p>
-<section id="why-graph-databases-versus-traditional-databases" class="level3">
-<h3 class="anchored" data-anchor-id="why-graph-databases-versus-traditional-databases">Why graph databases versus traditional databases</h3>
-<p>The study of graphs is not new; the first paper on graph theory is widely considered to be Euler’s Seven Bridges of Königsberg which was published in 1736. It has been pratically applied in disciplines including systems engineering, mathematics, and social sciences.</p>
+</section>
+<section id="why-graph-databases-versus-traditional-databases" class="level2">
+<h2 class="anchored" data-anchor-id="why-graph-databases-versus-traditional-databases">Why graph databases versus traditional databases</h2>
+<p>The study of graphs is not new; the first paper on graph theory is widely considered to be Euler’s Seven Bridges of Königsberg which was published in 1736. It has been practically applied in disciplines including systems engineering, mathematics, and social sciences.</p>
 <p>But recommender systems are built on data, many millions of data points; why not use the traditional structured data format which is intended to handle and scale data at various orders of magnitude?</p>
 <p>The simple answer is interconnectedness - <strong>graph databases excel at interconnected data in ways that traditional databases can only approximate</strong>. There are other benefits will discuss later.</p>
 <p>Recommender systems, at their core, provide suggestions based on the strength of relationships between interconnected objects. Traditional structured data uses synthetic join keys between specific fields across many tables to simulate these kinds of relationships; consider a move recommender system that stores its users, their viewing history, movies and their metadata, reviews, and so on in distinct table. One would need to join between each of these tables, perhaps computing additional measures, to find that User A and User B both watched Movie X. The relationship is a mechanism, and not a distinct attribute in traditional relational databases.</p>
 <p>In stark contrast, the relationships, or edges, in graph databases are first-class citizens. That is to say, <strong>relationships between data points are of equal importance as the data points themselves</strong>. Considering our earlier movie recommendation, User A, User B, and Movie X are individual nodes, connected by their mutual relationship of having watched (and been watched, respectively) as a distinct entity; a relationship. This relationship itself can be queried, categorized, and summarized just as the users and movies themselves would be in a relational database.</p>
 <p>This allows us to ask powerful and informative questions, especially applying concepts from graph theory. Let’s look at a more specific use case to demonstrate how this is used in practice.</p>
-<p>https://annals-csis.org/proceedings/2021/pliks/33.pdf</p>
 </section>
-<section id="specific-use-case-job-recommender-systems-using-graph-databases" class="level3">
-<h3 class="anchored" data-anchor-id="specific-use-case-job-recommender-systems-using-graph-databases">Specific use case; job recommender systems using graph databases</h3>
+<section id="job-recommender-system" class="level2">
+<h2 class="anchored" data-anchor-id="job-recommender-system">Job recommender system</h2>
 <p>The authors of https://feast-ecmlpkdd.github.io/archive/2021/papers/FEAST2021_paper_2.pdf demonstrate how they applied graph databases to encode job offers and skills to then feed a recommender system allow users to find postings that best fit their skill portfolio.</p>
-<p>In their implementation, both occupations and skills are considered nodes in the graph database. These nodes are then connected by a directional edge (or relationship) from the occupation to the skills, essentially representing the natural language phase “This job requires these skills”. What truly powers the recommendation engine though, is the properties of the relationship, which allow the authors to quantitatively measure the strength of a relationship between an occupation and a skill. This relationship can be used both graphically as the “distance” of a skill to an occupation, as well as analytically, to describe the most important or relevant skills to a given occupation.</p>
+<div class="cell">
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="./images/skills2job_workflow.png" class="img-fluid figure-img"></p>
+<figcaption>Skills2Job Workflow. Credit A. Giabelli et al.</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<p>In their implementation, both occupations and skills are considered nodes in the graph database. These nodes are then connected by a directional edge (or relationship) from the occupation to the skills, essentially representing the natural language phase “This job requires these skills”.</p>
+<p>What truly powers the recommendation engine though, is the properties of the relationship, which allow the authors to quantitatively measure the strength of a relationship between an occupation and a skill. This relationship can be used both graphically as the “distance” of a skill to an occupation, as well as analytically, to describe the most important or relevant skills to a given occupation.</p>
+<div class="cell">
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="./images/skills2job_graph.png" class="img-fluid figure-img"></p>
+<figcaption>Skills2Job Graph Schema. Credit A. Giabelli et al.</figcaption>
+</figure>
+</div>
+</div>
+</div>
 <p>The authors deployed this design as an application called “Skills2Job”. From an end user’s standpoint, a job hunter, they would simply list their current skills and have an array of job offers suggested to them, prioritized according to their specific skill set. Optionally, someone looking to break into a new domain could easily see the most important skills related to those offers and understand what sort of development they might take to become competitive.</p>
 <p>All of this functionality comes from a very simple graph database that consists of two nodes and one relationship.</p>
-<p>https://feast-ecmlpkdd.github.io/archive/2021/papers/FEAST2021_paper_2.pdf</p>
+<p><a href="https://feast-ecmlpkdd.github.io/archive/2021/papers/FEAST2021_paper_2.pdf">Giabelli, Malandri, Mercorio, Mezzanzanica, Seveso. “Skills2Job: A recommender system that encodes job offer embeddings on graph databases”</a></p>
 </section>
-<section id="additional-considerations" class="level3">
-<h3 class="anchored" data-anchor-id="additional-considerations">Additional Considerations</h3>
-<p>We have barely grazed the surface of the potential of graph databases in recommender system applications. There’s also significant performance implications; the edges in a graph database are essentially memory pointers, allowing extremely efficient traversal of nodes and edges compared to a indexed system of relational databases. Adding additional dimensions to a graph database is as simple as creating a new node and relationship to an existing database, whereas a traditional database would require a schema change and the maintenance and downtime associated with it.</p>
-<p>And perhaps most importantly, graph databases are intuitive to humans. They allow us to tap into our powerful visual processing capabilties, just as a good visualization would. Relationships and nodes are conceptually easier to grasp than primary keys and schemas, and align with the way our brains work (citation).</p>
+<section id="additional-considerations" class="level2">
+<h2 class="anchored" data-anchor-id="additional-considerations">Additional Considerations</h2>
+<section id="performance" class="level3">
+<h3 class="anchored" data-anchor-id="performance">Performance</h3>
+<p>We have barely grazed the surface of the potential of graph databases in recommender system applications. There’s also significant performance implications; the edges in a graph database are essentially memory pointers, allowing extremely efficient traversal of nodes and edges compared to a indexed system of relational databases. This is called <em>index-free adjacency</em>, and effectively it means that the runtime of querying your graph remains similar as your data scale expands in orders of magnitude; very important as your recommender system grows and more and more users are interacting with it<a href="#fn1" class="footnote-ref" id="fnref1" role="doc-noteref"><sup>1</sup></a>.</p>
+<p>Horizontal scaling, such as adding additional dimensions to a graph database, is as simple as creating a new node and relationship to an existing database, whereas a traditional database would require a schema change and the maintenance and downtime associated with it. Sharding is a technique that can be used for relational databases, but the trade-off is complexity and consistency.</p>
 </section>
+<section id="intuitiveness" class="level3">
+<h3 class="anchored" data-anchor-id="intuitiveness">Intuitiveness</h3>
+<p>And perhaps most importantly, graph databases are intuitive to humans. They allow us to tap into our powerful visual processing capabilities, just as a good visualization would. Relationships and nodes are conceptually easier to grasp than primary keys and schemas, especially as relationships become complex and the scale of data expands<a href="#fn2" class="footnote-ref" id="fnref2" role="doc-noteref"><sup>2</sup></a>.</p>
+</section>
+</section>
+<section id="conclusion" class="level2">
+<h2 class="anchored" data-anchor-id="conclusion">Conclusion</h2>
+<p>Recommender systems are powerful tools but as with any application, the correct data model to support it is paramount. Graph databases, while relatively nascent, solve a great deal of the issues applications can encounter as they scale, while also reducing the overall burden of maintainability and conceptual understanding. The two combined have demonstrated success in many applications, and will likely become increasingly commonplace across domains as vectorized data is increasingly sought after.</p>
 </section>
 
-</main>
+
+<div id="quarto-appendix" class="default"><section id="footnotes" class="footnotes footnotes-end-of-document" role="doc-endnotes"><h2 class="anchored quarto-appendix-heading">Footnotes</h2>
+
+<ol>
+<li id="fn1"><p>Stanescu, “A Comparison between a Relational and a Graph Database in the Context of a Recommendation System”. 2021 <a href="https://annals-csis.org/proceedings/2021/pliks/33.pdf">Link</a><a href="#fnref1" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+<li id="fn2"><p>See Fig. 2 and Fig. 3 in <a href="https://annals-csis.org/proceedings/2021/pliks/33.pdf">Stanescu 2021</a> for how similar data is more easily understood in graph format.<a href="#fnref2" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+</ol>
+</section></div></main>
 <!-- /main column -->
 <script id="quarto-html-after-body" type="application/javascript">
 window.document.addEventListener("DOMContentLoaded", function (event) {
